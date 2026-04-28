@@ -17,7 +17,7 @@ Clone this repository into your ComfyUI `custom_nodes` directory:
 
 ```bash
 cd ComfyUI/custom_nodes
-git clone https://github.com/YOUR_USERNAME/ComfyUI-FloatingPreview.git
+git clone https://github.com/Grow1nly/ComfyUI-FloatingPreview.git
 ```
 
 Restart ComfyUI after installation.
