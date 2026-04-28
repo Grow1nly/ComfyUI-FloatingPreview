@@ -1,0 +1,204 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
+#floating-preview-v2 {
+    position: fixed;
+    top: 72px;
+    left: 50px;
+    width: 320px;
+    height: 240px;
+    min-width: 220px;
+    min-height: 120px;
+    background: rgba(20, 20, 25, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    z-index: 30;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    color: #e0e0e0;
+    transition: opacity 0.3s ease, box-shadow 0.3s ease, background 0.2s ease;
+}
+
+#floating-preview-v2:hover {
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+#floating-preview-v2.fp-disabled {
+    pointer-events: none;
+    background: rgba(20, 20, 25, 0.28);
+}
+
+#floating-preview-v2.fp-disabled #fp-header,
+#floating-preview-v2.fp-disabled #fp-header *,
+#floating-preview-v2.fp-disabled #fp-controls,
+#floating-preview-v2.fp-disabled #fp-toggle,
+#floating-preview-v2.fp-disabled #fp-minimize {
+    pointer-events: auto;
+}
+
+#fp-header {
+    background: rgba(30, 30, 35, 0.88);
+    padding: 10px 14px;
+    cursor: move;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    user-select: none;
+}
+
+#fp-controls {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+#fp-header span {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #f3f3f3;
+}
+
+#fp-header span::before {
+    content: '';
+    display: block;
+    width: 8px;
+    height: 8px;
+    background: #00d26a;
+    border-radius: 50%;
+    box-shadow: 0 0 8px #00d26a;
+    animation: pulse-dot-v2 2s infinite;
+}
+
+@keyframes pulse-dot-v2 {
+    0% { box-shadow: 0 0 0 0 rgba(0, 210, 106, 0.7); }
+    70% { box-shadow: 0 0 0 6px rgba(0, 210, 106, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(0, 210, 106, 0); }
+}
+
+#fp-toggle,
+#fp-minimize {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #e0e0e0;
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+#fp-toggle:hover,
+#fp-minimize:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+    transform: translateY(-1px);
+}
+
+#fp-toggle:active,
+#fp-minimize:active {
+    transform: translateY(0);
+}
+
+#fp-minimize {
+    min-width: 28px;
+    padding: 4px 8px;
+}
+
+#fp-content {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    padding: 10px;
+    gap: 10px;
+    background: transparent;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
+
+#fp-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+#fp-content::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+#fp-content::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+}
+
+#fp-content img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    background: #000;
+    animation: fade-in-v2 0.3s ease-out;
+}
+
+#floating-preview-v2.fp-minimized #fp-content {
+    display: none;
+}
+
+#floating-preview-v2.fp-minimized {
+    min-height: 0;
+}
+
+@keyframes fade-in-v2 {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+#fp-resize {
+    width: 14px;
+    height: 14px;
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    cursor: nwse-resize;
+    opacity: 0.5;
+    transition: opacity 0.2s ease;
+}
+
+#fp-resize:hover {
+    opacity: 1;
+}
+
+#fp-resize::after,
+#fp-resize::before {
+    content: '';
+    position: absolute;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 1px;
+    transform: rotate(-45deg);
+}
+
+#fp-resize::after {
+    width: 10px;
+    height: 2px;
+    bottom: 5px;
+    right: 1px;
+}
+
+#fp-resize::before {
+    width: 6px;
+    height: 2px;
+    bottom: 1px;
+    right: 3px;
+}
