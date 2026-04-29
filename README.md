@@ -1,6 +1,6 @@
 # ComfyUI Floating Preview
 
-![Demo](Enregistrement%202026-04-29%20133128.gif)
+![Demo](images/Enregistrement%202026-04-29%20133128.gif)
 
 A lightweight ComfyUI frontend extension that shows image previews in a movable floating window while your workflow is running.
 
