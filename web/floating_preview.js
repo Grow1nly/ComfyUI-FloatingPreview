@@ -1,10 +1,10 @@
 import { app } from "../../scripts/app.js";
 
-const EXTENSION_NAME = "FloatingPreviewProV2";
-const STYLE_ID = "floating-preview-v2-style";
-const CONTAINER_ID = "floating-preview-v2";
-const STORAGE_KEY = "fp-state-v2";
-const GLOBAL_CLEANUP_KEY = "__floatingPreviewCleanupV2";
+const EXTENSION_NAME = "FloatingPreviewPro";
+const STYLE_ID = "floating-preview-pro-style";
+const CONTAINER_ID = "floating-preview-pro";
+const STORAGE_KEY = "fp-state-pro";
+const GLOBAL_CLEANUP_KEY = "__floatingPreviewCleanuppro";
 const DEFAULT_STATE = {
     enabled: true,
     minimized: false,
@@ -34,7 +34,7 @@ function loadState() {
             ...parsed,
         };
     } catch (error) {
-        console.warn("FloatingPreviewV2: unable to restore saved state", error);
+        console.warn("FloatingPreviewpro: unable to restore saved state", error);
         return { ...DEFAULT_STATE };
     }
 }
@@ -65,7 +65,7 @@ app.registerExtension({
         container.id = CONTAINER_ID;
         container.innerHTML = `
             <div id="fp-header">
-                <span>Preview V2</span>
+                <span>Preview pro</span>
                 <div id="fp-controls">
                     <button id="fp-minimize" type="button"></button>
                     <button id="fp-toggle" type="button"></button>
