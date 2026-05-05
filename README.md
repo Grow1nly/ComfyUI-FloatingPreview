@@ -4,7 +4,7 @@
 
 A lightweight ComfyUI frontend extension that shows image previews in a movable floating window while your workflow is running.
 
-## ✨ Fonctionnalités
+## ✨ Features
 
 - 📺 Live floating preview for generated images
 - 🖱️ Draggable and resizable preview window
@@ -24,7 +24,7 @@ git clone https://github.com/Grow1nly/ComfyUI-FloatingPreview.git
 
 Restart ComfyUI after installation.
 
-## 📖 Utilisation
+## 📖 Usage
 
 Start a workflow as usual. The floating preview panel appears in the ComfyUI interface and updates when previews or final images are produced.
 
@@ -37,13 +37,13 @@ You can:
 
 ## 🗂️ Structure
 
-| Fichier | Description |
+| File | Description |
 |---------|-------------|
 | `__init__.py` | Registers the frontend extension |
 | `web/floating_preview.js` | Preview logic and UI behavior |
 | `web/style.css` | Panel styling |
 
-## 🔌 Compatibilité
+## 🔌 Compatibility
 
 Built for ComfyUI as a frontend-only custom node extension. No extra Python dependencies are required.
 
