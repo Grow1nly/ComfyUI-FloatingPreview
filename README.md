@@ -56,3 +56,4 @@ Built for ComfyUI as a frontend-only custom node extension. No extra Python depe
 ## 📝 License
 
 MIT
+> *Contributions are welcome — open a PR or issue.*
