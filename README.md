@@ -1,19 +1,19 @@
-# ComfyUI Floating Preview
+# 🤖 ComfyUI Floating Preview
 
 ![Demo](images/Enregistrement%202026-04-29%20133128.gif)
 
 A lightweight ComfyUI frontend extension that shows image previews in a movable floating window while your workflow is running.
 
-## Features
+## ✨ Fonctionnalités
 
-- Live floating preview for generated images
-- Draggable and resizable preview window
-- Minimize and enable/disable controls
-- Automatic image fit on first display
-- Saved window position and size between sessions
-- Clears native sampler previews to keep the canvas cleaner
+- 📺 Live floating preview for generated images
+- 🖱️ Draggable and resizable preview window
+- 📦 Minimize and enable/disable controls
+- 🔲 Automatic image fit on first display
+- 💾 Saved window position and size between sessions
+- 🧹 Clears native sampler previews to keep the canvas cleaner
 
-## Installation
+## 🚀 Installation
 
 Clone this repository into your ComfyUI `custom_nodes` directory:
 
@@ -24,7 +24,7 @@ git clone https://github.com/Grow1nly/ComfyUI-FloatingPreview.git
 
 Restart ComfyUI after installation.
 
-## Usage
+## 📖 Utilisation
 
 Start a workflow as usual. The floating preview panel appears in the ComfyUI interface and updates when previews or final images are produced.
 
@@ -35,22 +35,24 @@ You can:
 - minimize it
 - disable or re-enable it without removing the extension
 
-## Structure
+## 🗂️ Structure
 
-- `__init__.py`: registers the frontend extension
-- `web/floating_preview.js`: preview logic and UI behavior
-- `web/style.css`: panel styling
+| Fichier | Description |
+|---------|-------------|
+| `__init__.py` | Registers the frontend extension |
+| `web/floating_preview.js` | Preview logic and UI behavior |
+| `web/style.css` | Panel styling |
 
-## Compatibility
+## 🔌 Compatibilité
 
 Built for ComfyUI as a frontend-only custom node extension. No extra Python dependencies are required.
 
-## Roadmap
+## 🗺️ Roadmap
 
 - configurable default position and size
 - optional settings panel
 - improved support for different preview event flows
 
-## License
+## 📝 License
 
 MIT
