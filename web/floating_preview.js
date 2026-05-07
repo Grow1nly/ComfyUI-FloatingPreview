@@ -10,7 +10,7 @@ const DEFAULT_STATE = {
     enabled: true,
     minimized: false,
     left: "120px",
-    top: "122px",
+    top: "135px",
     width: 396,
     height: 640,
     autoFit: true,
