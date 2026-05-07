@@ -64,6 +64,7 @@ app.registerExtension({
             link.rel = "stylesheet";
             link.href = new URL("./style.css", import.meta.url).href;
             document.head.appendChild(link);
+            await new Promise(resolve => { link.onload = resolve; });
         }
 
         const state = loadState();
