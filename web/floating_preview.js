@@ -122,7 +122,6 @@ app.registerExtension({
             container.style.left = state.left;
             container.style.top = state.top;
             container.style.width = `${Math.max(Number(state.width) || DEFAULT_STATE.width, MIN_WIDTH)}px`;
-            container.style.opacity = enabled ? "1" : "0.22";
             toggleBtn.innerText = enabled ? "ON" : "OFF";
             applyInteractionMode();
             applyMinimizedState();
@@ -296,7 +295,6 @@ app.registerExtension({
 
         function setEnabled(nextEnabled) {
             enabled = nextEnabled;
-            container.style.opacity = enabled ? "1" : "0.22";
             toggleBtn.innerText = enabled ? "ON" : "OFF";
             applyInteractionMode();
 

@@ -32,11 +32,20 @@
     background: rgba(20, 20, 25, 0.28);
 }
 
-#floating-preview-pro.fp-disabled #fp-header,
-#floating-preview-pro.fp-disabled #fp-header *,
-#floating-preview-pro.fp-disabled #fp-controls,
+/* Enfants qui s'estompent — NOTAMMENT pas les boutons */
+#floating-preview-pro.fp-disabled #fp-header > span,
+#floating-preview-pro.fp-disabled #fp-header > span::before,
+#floating-preview-pro.fp-disabled #fp-content,
+#floating-preview-pro.fp-disabled #fp-resize {
+    opacity: 0.22;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+/* Boutons restent opaques et cliquables */
 #floating-preview-pro.fp-disabled #fp-toggle,
 #floating-preview-pro.fp-disabled #fp-minimize {
+    opacity: 1;
     pointer-events: auto;
 }
 
