@@ -8,7 +8,7 @@ const GLOBAL_CLEANUP_KEY = "__floatingPreviewCleanuppro";
 const DEFAULT_STATE = {
     enabled: true,
     minimized: false,
-    left: "50px",
+    left: "90px",
     top: "72px",
     width: 320,
     height: 240,
