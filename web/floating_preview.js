@@ -4,6 +4,7 @@ const EXTENSION_NAME = "FloatingPreviewPro";
 const STYLE_ID = "floating-preview-pro-style";
 const CONTAINER_ID = "floating-preview-pro";
 const STORAGE_KEY = "fp-state-pro";
+const STORAGE_VERSION = 2;
 const GLOBAL_CLEANUP_KEY = "__floatingPreviewCleanuppro";
 const DEFAULT_STATE = {
     enabled: true,
@@ -29,12 +30,17 @@ function loadState() {
 
     try {
         const parsed = JSON.parse(saved);
+        if (parsed._version !== STORAGE_VERSION) {
+            localStorage.removeItem(STORAGE_KEY);
+            console.log("FloatingPreviewPro: state version mismatch, resetting to defaults");
+            return { ...DEFAULT_STATE };
+        }
         return {
             ...DEFAULT_STATE,
             ...parsed,
         };
     } catch (error) {
-        console.warn("FloatingPreviewpro: unable to restore saved state", error);
+        console.warn("FloatingPreviewPro: unable to restore saved state", error);
         return { ...DEFAULT_STATE };
     }
 }
@@ -107,6 +113,7 @@ app.registerExtension({
 
         function saveState() {
             const nextState = {
+                _version: STORAGE_VERSION,
                 enabled,
                 minimized,
                 left: container.style.left || DEFAULT_STATE.left,
