@@ -13,7 +13,6 @@ const DEFAULT_STATE = {
     top: "135px",
     width: 396,
     height: 640,
-    autoFit: true,
 };
 const MIN_WIDTH = 220;
 const MIN_HEIGHT = 120;
@@ -93,12 +92,6 @@ app.registerExtension({
         `;
         document.body.appendChild(container);
 
-        // Detect ComfyUI theme: body has .dark in dark mode, absent in light mode
-        const isLightTheme = !document.body.classList.contains("dark");
-        if (isLightTheme) {
-            container.classList.add("fp-light");
-        }
-
         const content = container.querySelector("#fp-content");
         const toggleBtn = container.querySelector("#fp-toggle");
         const minimizeBtn = container.querySelector("#fp-minimize");
@@ -114,9 +107,7 @@ app.registerExtension({
         let dragOffsetX = 0;
         let dragOffsetY = 0;
         let startWidth = 0;
-        let startHeight = 0;
         let startX = 0;
-        let startY = 0;
         let preDisabledMinimized = false;
         const cleanups = [];
 
@@ -138,7 +129,6 @@ app.registerExtension({
                 top: container.style.top || DEFAULT_STATE.top,
                 width: Math.round(container.offsetWidth || DEFAULT_STATE.width),
                 height: Math.round(container.offsetHeight || DEFAULT_STATE.height),
-                autoFit: state.autoFit,
             };
             localStorage.setItem(STORAGE_KEY, JSON.stringify(nextState));
         }
@@ -151,7 +141,6 @@ app.registerExtension({
             toggleBtn.ariaLabel = enabled ? "Disable preview" : "Enable preview";
             applyInteractionMode();
             applyMinimizedState();
-            container.classList.toggle("fp-autofit-on", state.autoFit);
         }
 
         function applyInteractionMode() {
@@ -235,16 +224,16 @@ app.registerExtension({
             }
         }
 
-        function autoFitToImage(img) {
-            if (minimized || !state.autoFit || !img.naturalWidth || !img.naturalHeight) return;
+        function recalcHeightFromImage() {
+            if (minimized) return;
 
-            const maxWidth = Math.max(window.innerWidth - (SAFE_MARGIN * 2), MIN_WIDTH);
-            const targetWidth = clamp(container.offsetWidth || DEFAULT_STATE.width, MIN_WIDTH, maxWidth);
-            const imageHeight = targetWidth * (img.naturalHeight / img.naturalWidth);
+            const img = content.querySelector("img");
+            if (!img || !img.naturalWidth || !img.naturalHeight) return;
+
             const maxHeight = Math.max(window.innerHeight - SAFE_TOP_MARGIN - SAFE_MARGIN, MIN_HEIGHT);
+            const imageHeight = container.offsetWidth * (img.naturalHeight / img.naturalWidth);
             const nextHeight = clamp(imageHeight + header.offsetHeight, MIN_HEIGHT, maxHeight);
 
-            container.style.width = `${Math.round(targetWidth)}px`;
             container.style.height = `${Math.round(nextHeight)}px`;
             sanitizePosition();
             saveState();
@@ -257,7 +246,7 @@ app.registerExtension({
             const img = document.createElement("img");
             img.src = url;
             img.alt = "Floating preview";
-            img.onload = () => autoFitToImage(img);
+            img.onload = () => recalcHeightFromImage();
             content.appendChild(img);
 
             if (isBlob) {
@@ -309,7 +298,7 @@ app.registerExtension({
             if (minimized) {
                 container.style.height = `${header.offsetHeight}px`;
             } else {
-                container.style.height = `${Math.max(Number(state.height) || DEFAULT_STATE.height, MIN_HEIGHT)}px`;
+                recalcHeightFromImage();
             }
         }
 
@@ -427,12 +416,8 @@ app.registerExtension({
         addManagedListener(resize, "mousedown", (event) => {
             if (event.button !== 0 || minimized) return;
             isResizing = true;
-            state.autoFit = false;
-            container.classList.remove("fp-autofit-on");
             startWidth = container.offsetWidth;
-            startHeight = container.offsetHeight;
             startX = event.clientX;
-            startY = event.clientY;
             event.stopPropagation();
             event.preventDefault();
         });
@@ -448,11 +433,9 @@ app.registerExtension({
 
             if (isResizing) {
                 const maxWidth = Math.max(window.innerWidth - container.offsetLeft - SAFE_MARGIN, MIN_WIDTH);
-                const maxHeight = Math.max(window.innerHeight - container.offsetTop - SAFE_MARGIN, MIN_HEIGHT);
                 const nextWidth = clamp(startWidth + (event.clientX - startX), MIN_WIDTH, maxWidth);
-                const nextHeight = clamp(startHeight + (event.clientY - startY), MIN_HEIGHT, maxHeight);
                 container.style.width = `${Math.round(nextWidth)}px`;
-                container.style.height = `${Math.round(nextHeight)}px`;
+                recalcHeightFromImage();
             }
         });
 

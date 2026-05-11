@@ -156,7 +156,6 @@
     box-shadow: var(--fp-img-shadow);
     border: 1px solid var(--fp-img-border);
     background: var(--fp-img-bg);
-    animation: fade-in-pro 0.3s ease-out;
 }
 
 #fp-content::-webkit-scrollbar {
@@ -206,65 +205,6 @@
     border-radius: 50%;
     box-shadow: 0 0 8px var(--fp-dot);
     animation: pulse-dot-pro 2s infinite;
-}
-
-#fp-header span::after {
-    content: "auto";
-    font-size: 9px;
-    font-weight: 400;
-    opacity: 0.6;
-    letter-spacing: 0.3px;
-    transition: opacity 0.3s ease;
-}
-
-/* ── États : classe ou pseudo-classe sur root ou composant (0,1,1,0) ── */
-
-#floating-preview-pro:hover {
-    box-shadow: var(--fp-shadow-hover), var(--fp-inset-hover);
-}
-
-#floating-preview-pro.fp-light {
-    --fp-bg: rgba(250, 250, 252, 0.85);
-    --fp-bg-disabled: rgba(250, 250, 252, 0.40);
-    --fp-border: rgba(0, 0, 0, 0.1);
-    --fp-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
-    --fp-inset: inset 0 1px 0 rgba(255, 255, 255, 0.6);
-    --fp-shadow-hover: 0 10px 28px rgba(0, 0, 0, 0.16);
-    --fp-inset-hover: inset 0 1px 0 rgba(255, 255, 255, 0.7);
-    --fp-text: #333;
-
-    --fp-header-bg: rgba(235, 235, 240, 0.92);
-    --fp-header-bg-disabled: rgba(235, 235, 240, 0.50);
-    --fp-header-border: rgba(0, 0, 0, 0.06);
-    --fp-header-text: #1a1a1a;
-
-    --fp-toggle-bg: rgba(0, 180, 90, 0.12);
-    --fp-toggle-border: rgba(0, 180, 90, 0.30);
-    --fp-toggle-text: #00994d;
-    --fp-toggle-hover-bg: rgba(0, 180, 90, 0.20);
-    --fp-toggle-hover-text: #008040;
-
-    --fp-toggle-off-bg: rgba(220, 50, 50, 0.12);
-    --fp-toggle-off-border: rgba(220, 50, 50, 0.30);
-    --fp-toggle-off-text: #cc2222;
-    --fp-toggle-off-hover-bg: rgba(220, 50, 50, 0.20);
-    --fp-toggle-off-hover-text: #b31a1a;
-
-    --fp-minimize-bg: rgba(0, 0, 0, 0.06);
-    --fp-minimize-border: rgba(0, 0, 0, 0.10);
-    --fp-minimize-text: #555;
-    --fp-minimize-hover-bg: rgba(0, 0, 0, 0.12);
-    --fp-minimize-hover-text: #1a1a1a;
-
-    --fp-scrollbar: rgba(0, 0, 0, 0.20);
-    --fp-img-border: rgba(0, 0, 0, 0.08);
-    --fp-img-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-    --fp-img-bg: #fff;
-
-    --fp-resize: rgba(0, 0, 0, 0.40);
-
-    --fp-dot: #00994d;
-    --fp-dot-off: #aaa;
 }
 
 #floating-preview-pro.fp-disabled {
@@ -336,10 +276,6 @@
     animation: none;
 }
 
-#floating-preview-pro:not(.fp-autofit-on) #fp-header span::after {
-    opacity: 0.2;
-}
-
 /* ── États composés + pseudo-classe (0,2,2,0) ── */
 
 #floating-preview-pro.fp-disabled #fp-toggle:hover {
@@ -360,16 +296,5 @@
     }
     100% {
         box-shadow: 0 0 0 0 rgba(0, 210, 106, 0);
-    }
-}
-
-@keyframes fade-in-pro {
-    from {
-        opacity: 0;
-        transform: scale(0.95);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1);
     }
 }
