@@ -250,7 +250,7 @@ app.registerExtension({
         function updateZoomDisplay() {
             const zoomEl = container.querySelector("#fp-zoom-level");
             if (!zoomEl) return;
-            zoomEl.textContent = zoom !== 1 ? ` · ${Math.round(zoom * 100)}%` : "";
+            zoomEl.textContent = zoom !== 1 ? `${Math.round(zoom * 100)}%` : "";
         }
 
         function clampPan() {
@@ -454,7 +454,7 @@ app.registerExtension({
             if (!img || !img.naturalWidth) return;
             event.preventDefault();
             const delta = event.deltaY > 0 ? -0.1 : 0.1;
-            const newZoom = clamp(zoom + delta, 0.1, 10);
+            const newZoom = clamp(zoom + delta, 1, 10);
             if (newZoom === zoom) return;
             const rect = content.getBoundingClientRect();
             const cursorX = event.clientX - rect.left;
