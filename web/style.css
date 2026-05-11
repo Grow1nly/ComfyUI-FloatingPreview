@@ -34,7 +34,7 @@
 
 #floating-preview-pro.fp-disabled #fp-content,
 #floating-preview-pro.fp-disabled #fp-resize {
-    opacity: 0.22;
+    opacity: 0.04;
     transition: opacity 0.3s ease;
     pointer-events: none;
 }
@@ -42,6 +42,13 @@
 #floating-preview-pro.fp-disabled #fp-toggle,
 #floating-preview-pro.fp-disabled #fp-minimize {
     pointer-events: auto;
+}
+
+/* Dot : éteint quand panel désactivé */
+#floating-preview-pro.fp-disabled #fp-header > span::before {
+    background: #555;
+    box-shadow: none;
+    animation: none;
 }
 
 #fp-header {

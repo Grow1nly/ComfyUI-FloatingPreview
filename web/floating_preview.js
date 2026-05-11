@@ -101,6 +101,7 @@ app.registerExtension({
         let startHeight = 0;
         let startX = 0;
         let startY = 0;
+        let preDisabledMinimized = false;
         const cleanups = [];
 
         function registerCleanup(callback) {
@@ -308,6 +309,14 @@ app.registerExtension({
 
             if (!enabled) {
                 clearFloatingPreview();
+                preDisabledMinimized = minimized;
+                if (!minimized) {
+                    setMinimized(true);
+                }
+            } else {
+                if (minimized && !preDisabledMinimized) {
+                    setMinimized(false);
+                }
             }
 
             saveState();
