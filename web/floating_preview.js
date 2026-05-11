@@ -67,6 +67,16 @@ app.registerExtension({
             await new Promise(resolve => { link.onload = resolve; });
         }
 
+        if (!document.getElementById("fp-font-inter")) {
+            const fontLink = document.createElement("link");
+            fontLink.id = "fp-font-inter";
+            fontLink.rel = "stylesheet";
+            fontLink.href =
+                "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap";
+            fontLink.onerror = () => console.warn("FloatingPreviewPro: failed to load Inter font, using system fallback");
+            document.head.appendChild(fontLink);
+        }
+
         const state = loadState();
         const container = document.createElement("div");
         container.id = CONTAINER_ID;
@@ -74,14 +84,20 @@ app.registerExtension({
             <div id="fp-header">
                 <span>Preview pro</span>
                 <div id="fp-controls">
-                    <button id="fp-minimize" type="button"></button>
-                    <button id="fp-toggle" type="button"></button>
+                    <button id="fp-minimize" type="button" aria-label="Minimize"></button>
+                    <button id="fp-toggle" type="button" aria-label="Disable preview"></button>
                 </div>
             </div>
-            <div id="fp-content"></div>
+            <div id="fp-content" role="status" aria-live="polite"></div>
             <div id="fp-resize"></div>
         `;
         document.body.appendChild(container);
+
+        // Detect ComfyUI theme: body has .dark in dark mode, absent in light mode
+        const isLightTheme = !document.body.classList.contains("dark");
+        if (isLightTheme) {
+            container.classList.add("fp-light");
+        }
 
         const content = container.querySelector("#fp-content");
         const toggleBtn = container.querySelector("#fp-toggle");
@@ -132,8 +148,10 @@ app.registerExtension({
             container.style.top = state.top;
             container.style.width = `${Math.max(Number(state.width) || DEFAULT_STATE.width, MIN_WIDTH)}px`;
             toggleBtn.innerText = enabled ? "ON" : "OFF";
+            toggleBtn.ariaLabel = enabled ? "Disable preview" : "Enable preview";
             applyInteractionMode();
             applyMinimizedState();
+            container.classList.toggle("fp-autofit-on", state.autoFit);
         }
 
         function applyInteractionMode() {
@@ -285,6 +303,7 @@ app.registerExtension({
             container.classList.toggle("fp-minimized", minimized);
             minimizeBtn.innerText = minimized ? "+" : "-";
             minimizeBtn.title = minimized ? "Expand" : "Minimize";
+            minimizeBtn.ariaLabel = minimized ? "Expand" : "Minimize";
             resize.style.display = minimized ? "none" : "";
 
             if (minimized) {
@@ -295,11 +314,15 @@ app.registerExtension({
         }
 
         function setMinimized(nextMinimized) {
+            container.style.transition = "height 0.25s ease";
             minimized = nextMinimized;
             state.minimized = minimized;
             applyMinimizedState();
             sanitizePosition();
             syncStateFromDom();
+            window.setTimeout(() => {
+                container.style.transition = "";
+            }, 280);
         }
 
         function setEnabled(nextEnabled) {
@@ -405,6 +428,7 @@ app.registerExtension({
             if (event.button !== 0 || minimized) return;
             isResizing = true;
             state.autoFit = false;
+            container.classList.remove("fp-autofit-on");
             startWidth = container.offsetWidth;
             startHeight = container.offsetHeight;
             startX = event.clientX;
