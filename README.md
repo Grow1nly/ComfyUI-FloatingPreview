@@ -8,8 +8,9 @@ A lightweight ComfyUI frontend extension that shows image previews in a movable 
 
 - 📺 Live floating preview for generated images
 - 🖱️ Draggable and resizable preview window
+- 🔍 Zoom and pan within the preview (mouse wheel + drag)
 - 📦 Minimize and enable/disable controls
-- 🔲 Automatic image fit on first display
+- 🔲 Automatic image fit — panel height follows image ratio
 - 💾 Saved window position and size between sessions
 - 🧹 Clears native sampler previews to keep the canvas cleaner
 
@@ -32,6 +33,8 @@ You can:
 
 - drag the panel from the header
 - resize it from the bottom-right corner
+- **zoom** with the mouse wheel on the image
+- **pan** by click-dragging when zoomed in
 - minimize it
 - disable or re-enable it without removing the extension
 
