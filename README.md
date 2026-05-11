@@ -33,8 +33,8 @@ You can:
 
 - drag the panel from the header
 - resize it from the bottom-right corner
-- **zoom** with the mouse wheel on the image
-- **pan** by click-dragging when zoomed in
+- zoom with the mouse wheel on the image
+- pan by click-dragging when zoomed in
 - minimize it
 - disable or re-enable it without removing the extension
 
