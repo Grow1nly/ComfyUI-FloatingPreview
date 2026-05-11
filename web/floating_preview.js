@@ -13,7 +13,6 @@ const DEFAULT_STATE = {
     top: "135px",
     width: 396,
     height: 640,
-    autoFit: true,
 };
 const MIN_WIDTH = 220;
 const MIN_HEIGHT = 120;
@@ -67,18 +66,28 @@ app.registerExtension({
             await new Promise(resolve => { link.onload = resolve; });
         }
 
+        if (!document.getElementById("fp-font-inter")) {
+            const fontLink = document.createElement("link");
+            fontLink.id = "fp-font-inter";
+            fontLink.rel = "stylesheet";
+            fontLink.href =
+                "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap";
+            fontLink.onerror = () => console.warn("FloatingPreviewPro: failed to load Inter font, using system fallback");
+            document.head.appendChild(fontLink);
+        }
+
         const state = loadState();
         const container = document.createElement("div");
         container.id = CONTAINER_ID;
         container.innerHTML = `
             <div id="fp-header">
-                <span>Preview pro</span>
+                <span>Preview pro<span id="fp-zoom-level"></span></span>
                 <div id="fp-controls">
-                    <button id="fp-minimize" type="button"></button>
-                    <button id="fp-toggle" type="button"></button>
+                    <button id="fp-minimize" type="button" aria-label="Minimize"></button>
+                    <button id="fp-toggle" type="button" aria-label="Disable preview"></button>
                 </div>
             </div>
-            <div id="fp-content"></div>
+            <div id="fp-content" role="status" aria-live="polite"></div>
             <div id="fp-resize"></div>
         `;
         document.body.appendChild(container);
@@ -98,9 +107,16 @@ app.registerExtension({
         let dragOffsetX = 0;
         let dragOffsetY = 0;
         let startWidth = 0;
-        let startHeight = 0;
         let startX = 0;
-        let startY = 0;
+        let preDisabledMinimized = false;
+        let zoom = 1;
+        let panX = 0;
+        let panY = 0;
+        let isPanning = false;
+        let panStartX = 0;
+        let panStartY = 0;
+        let panOrigX = 0;
+        let panOrigY = 0;
         const cleanups = [];
 
         function registerCleanup(callback) {
@@ -121,7 +137,6 @@ app.registerExtension({
                 top: container.style.top || DEFAULT_STATE.top,
                 width: Math.round(container.offsetWidth || DEFAULT_STATE.width),
                 height: Math.round(container.offsetHeight || DEFAULT_STATE.height),
-                autoFit: state.autoFit,
             };
             localStorage.setItem(STORAGE_KEY, JSON.stringify(nextState));
         }
@@ -131,6 +146,7 @@ app.registerExtension({
             container.style.top = state.top;
             container.style.width = `${Math.max(Number(state.width) || DEFAULT_STATE.width, MIN_WIDTH)}px`;
             toggleBtn.innerText = enabled ? "ON" : "OFF";
+            toggleBtn.ariaLabel = enabled ? "Disable preview" : "Enable preview";
             applyInteractionMode();
             applyMinimizedState();
         }
@@ -216,19 +232,53 @@ app.registerExtension({
             }
         }
 
-        function autoFitToImage(img) {
-            if (minimized || !state.autoFit || !img.naturalWidth || !img.naturalHeight) return;
+        function recalcHeightFromImage() {
+            if (minimized) return;
 
-            const maxWidth = Math.max(window.innerWidth - (SAFE_MARGIN * 2), MIN_WIDTH);
-            const targetWidth = clamp(container.offsetWidth || DEFAULT_STATE.width, MIN_WIDTH, maxWidth);
-            const imageHeight = targetWidth * (img.naturalHeight / img.naturalWidth);
+            const img = content.querySelector("img");
+            if (!img || !img.naturalWidth || !img.naturalHeight) return;
+
             const maxHeight = Math.max(window.innerHeight - SAFE_TOP_MARGIN - SAFE_MARGIN, MIN_HEIGHT);
+            const imageHeight = container.offsetWidth * (img.naturalHeight / img.naturalWidth);
             const nextHeight = clamp(imageHeight + header.offsetHeight, MIN_HEIGHT, maxHeight);
 
-            container.style.width = `${Math.round(targetWidth)}px`;
             container.style.height = `${Math.round(nextHeight)}px`;
             sanitizePosition();
             saveState();
+        }
+
+        function updateZoomDisplay() {
+            const zoomEl = container.querySelector("#fp-zoom-level");
+            if (!zoomEl) return;
+            zoomEl.textContent = zoom !== 1 ? `${Math.round(zoom * 100)}%` : "";
+        }
+
+        function clampPan() {
+            const img = content.querySelector("img");
+            if (!img || !img.naturalWidth || !img.naturalHeight) return;
+            const contentW = content.clientWidth;
+            const contentH = content.clientHeight;
+            const renderedW = contentW;
+            const renderedH = img.naturalHeight * (contentW / img.naturalWidth);
+            const imgW = renderedW * zoom;
+            const imgH = renderedH * zoom;
+            if (imgW <= contentW) { panX = 0; } else { panX = clamp(panX, contentW - imgW, 0); }
+            if (imgH <= contentH) { panY = 0; } else { panY = clamp(panY, contentH - imgH, 0); }
+        }
+
+        function applyZoomTransform() {
+            const img = content.querySelector("img");
+            if (!img) return;
+            img.style.transform = `translate(${panX}px, ${panY}px) scale(${zoom})`;
+            content.style.cursor = zoom > 1 ? "grab" : "";
+            updateZoomDisplay();
+        }
+
+        function resetZoom() {
+            zoom = 1;
+            panX = 0;
+            panY = 0;
+            applyZoomTransform();
         }
 
         function addImage(url, isBlob) {
@@ -238,7 +288,8 @@ app.registerExtension({
             const img = document.createElement("img");
             img.src = url;
             img.alt = "Floating preview";
-            img.onload = () => autoFitToImage(img);
+            img.draggable = false;
+            img.onload = () => { recalcHeightFromImage(); resetZoom(); };
             content.appendChild(img);
 
             if (isBlob) {
@@ -284,21 +335,26 @@ app.registerExtension({
             container.classList.toggle("fp-minimized", minimized);
             minimizeBtn.innerText = minimized ? "+" : "-";
             minimizeBtn.title = minimized ? "Expand" : "Minimize";
+            minimizeBtn.ariaLabel = minimized ? "Expand" : "Minimize";
             resize.style.display = minimized ? "none" : "";
 
             if (minimized) {
                 container.style.height = `${header.offsetHeight}px`;
             } else {
-                container.style.height = `${Math.max(Number(state.height) || DEFAULT_STATE.height, MIN_HEIGHT)}px`;
+                recalcHeightFromImage();
             }
         }
 
         function setMinimized(nextMinimized) {
+            container.style.transition = "height 0.25s ease";
             minimized = nextMinimized;
             state.minimized = minimized;
             applyMinimizedState();
             sanitizePosition();
             syncStateFromDom();
+            window.setTimeout(() => {
+                container.style.transition = "";
+            }, 280);
         }
 
         function setEnabled(nextEnabled) {
@@ -308,6 +364,14 @@ app.registerExtension({
 
             if (!enabled) {
                 clearFloatingPreview();
+                preDisabledMinimized = minimized;
+                if (!minimized) {
+                    setMinimized(true);
+                }
+            } else {
+                if (minimized && !preDisabledMinimized) {
+                    setMinimized(false);
+                }
             }
 
             saveState();
@@ -384,6 +448,40 @@ app.registerExtension({
             }, 80);
         });
 
+        const wheelHandler = (event) => {
+            if (!enabled || minimized) return;
+            const img = content.querySelector("img");
+            if (!img || !img.naturalWidth) return;
+            event.preventDefault();
+            const delta = event.deltaY > 0 ? -0.1 : 0.1;
+            const newZoom = clamp(zoom + delta, 1, 10);
+            if (newZoom === zoom) return;
+            const rect = content.getBoundingClientRect();
+            const cursorX = event.clientX - rect.left;
+            const cursorY = event.clientY - rect.top;
+            const imgX = (cursorX - panX) / zoom;
+            const imgY = (cursorY - panY) / zoom;
+            zoom = newZoom;
+            panX = cursorX - imgX * zoom;
+            panY = cursorY - imgY * zoom;
+            clampPan();
+            applyZoomTransform();
+        };
+        content.addEventListener("wheel", wheelHandler, { passive: false });
+        registerCleanup(() => content.removeEventListener("wheel", wheelHandler));
+
+        addManagedListener(content, "mousedown", (event) => {
+            if (event.button !== 0 || zoom <= 1) return;
+            if (event.target.tagName !== "IMG") return;
+            isPanning = true;
+            panStartX = event.clientX;
+            panStartY = event.clientY;
+            panOrigX = panX;
+            panOrigY = panY;
+            content.style.cursor = "grabbing";
+            event.preventDefault();
+        });
+
         addManagedListener(header, "mousedown", (event) => {
             if (event.button !== 0) return;
             isDragging = true;
@@ -395,11 +493,8 @@ app.registerExtension({
         addManagedListener(resize, "mousedown", (event) => {
             if (event.button !== 0 || minimized) return;
             isResizing = true;
-            state.autoFit = false;
             startWidth = container.offsetWidth;
-            startHeight = container.offsetHeight;
             startX = event.clientX;
-            startY = event.clientY;
             event.stopPropagation();
             event.preventDefault();
         });
@@ -415,18 +510,25 @@ app.registerExtension({
 
             if (isResizing) {
                 const maxWidth = Math.max(window.innerWidth - container.offsetLeft - SAFE_MARGIN, MIN_WIDTH);
-                const maxHeight = Math.max(window.innerHeight - container.offsetTop - SAFE_MARGIN, MIN_HEIGHT);
                 const nextWidth = clamp(startWidth + (event.clientX - startX), MIN_WIDTH, maxWidth);
-                const nextHeight = clamp(startHeight + (event.clientY - startY), MIN_HEIGHT, maxHeight);
                 container.style.width = `${Math.round(nextWidth)}px`;
-                container.style.height = `${Math.round(nextHeight)}px`;
+                recalcHeightFromImage();
+            }
+
+            if (isPanning) {
+                panX = panOrigX + (event.clientX - panStartX);
+                panY = panOrigY + (event.clientY - panStartY);
+                clampPan();
+                applyZoomTransform();
             }
         });
 
         addManagedListener(document, "mouseup", () => {
-            if (!isDragging && !isResizing) return;
+            if (!isDragging && !isResizing && !isPanning) return;
             isDragging = false;
             isResizing = false;
+            isPanning = false;
+            content.style.cursor = zoom > 1 ? "grab" : "";
             sanitizePosition();
             syncStateFromDom();
         });

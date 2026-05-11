@@ -1,6 +1,49 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
-
+/* ══════════════════════════════════════════════
+   ROOT — variables + layout (spécificité 0,1,0,0)
+   ══════════════════════════════════════════════ */
 #floating-preview-pro {
+    --fp-bg: rgba(20, 20, 25, 0.7);
+    --fp-bg-disabled: rgba(20, 20, 25, 0.28);
+    --fp-border: rgba(255, 255, 255, 0.1);
+    --fp-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+    --fp-inset: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    --fp-shadow-hover: 0 10px 28px rgba(0, 0, 0, 0.4);
+    --fp-inset-hover: inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    --fp-text: #e0e0e0;
+
+    --fp-header-bg: rgba(30, 30, 35, 0.88);
+    --fp-header-bg-disabled: rgba(30, 30, 35, 0.35);
+    --fp-header-border: rgba(255, 255, 255, 0.05);
+    --fp-header-text: #f3f3f3;
+
+    --fp-toggle-bg: rgba(0, 210, 106, 0.15);
+    --fp-toggle-border: rgba(0, 210, 106, 0.25);
+    --fp-toggle-text: #00d26a;
+    --fp-toggle-hover-bg: rgba(0, 210, 106, 0.25);
+    --fp-toggle-hover-text: #00e678;
+
+    --fp-toggle-off-bg: rgba(255, 70, 70, 0.15);
+    --fp-toggle-off-border: rgba(255, 70, 70, 0.25);
+    --fp-toggle-off-text: #ff4646;
+    --fp-toggle-off-hover-bg: rgba(255, 70, 70, 0.25);
+    --fp-toggle-off-hover-text: #ff6666;
+
+    --fp-minimize-bg: rgba(255, 255, 255, 0.1);
+    --fp-minimize-border: rgba(255, 255, 255, 0.1);
+    --fp-minimize-text: #e0e0e0;
+    --fp-minimize-hover-bg: rgba(255, 255, 255, 0.2);
+    --fp-minimize-hover-text: #fff;
+
+    --fp-scrollbar: rgba(255, 255, 255, 0.2);
+    --fp-img-border: rgba(255, 255, 255, 0.05);
+    --fp-img-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    --fp-img-bg: #000;
+
+    --fp-resize: rgba(255, 255, 255, 0.7);
+
+    --fp-dot: #00d26a;
+    --fp-dot-off: #555;
+
     position: fixed;
     top: 72px;
     left: 50px;
@@ -8,50 +51,28 @@
     height: 240px;
     min-width: 220px;
     min-height: 120px;
-    background: rgba(20, 20, 25, 0.7);
+    max-width: 90vw;
+    max-height: 85vh;
+    background: var(--fp-bg);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--fp-border);
     border-radius: 12px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    box-shadow: var(--fp-shadow), var(--fp-inset);
     z-index: 30;
     display: flex;
     flex-direction: column;
     overflow: hidden;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    color: #e0e0e0;
+    color: var(--fp-text);
     transition: opacity 0.3s ease, box-shadow 0.3s ease, background 0.2s ease;
 }
 
-#floating-preview-pro:hover {
-    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15);
-}
-
-#floating-preview-pro.fp-disabled {
-    pointer-events: none;
-    background: rgba(20, 20, 25, 0.28);
-}
-
-/* Enfants qui s'estompent — NOTAMMENT pas les boutons */
-#floating-preview-pro.fp-disabled #fp-header > span,
-#floating-preview-pro.fp-disabled #fp-header > span::before,
-#floating-preview-pro.fp-disabled #fp-content,
-#floating-preview-pro.fp-disabled #fp-resize {
-    opacity: 0.22;
-    transition: opacity 0.3s ease;
-    pointer-events: none;
-}
-
-/* Boutons restent opaques et cliquables */
-#floating-preview-pro.fp-disabled #fp-toggle,
-#floating-preview-pro.fp-disabled #fp-minimize {
-    opacity: 1;
-    pointer-events: auto;
-}
+/* ── Composants — bases (0,1,0,0) ── */
 
 #fp-header {
-    background: rgba(30, 30, 35, 0.88);
-    padding: 10px 14px;
+    background: var(--fp-header-bg);
+    padding: 12px 16px;
     cursor: move;
     display: flex;
     justify-content: space-between;
@@ -59,53 +80,18 @@
     font-size: 13px;
     font-weight: 500;
     letter-spacing: 0.5px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid var(--fp-header-border);
     user-select: none;
 }
 
 #fp-controls {
     display: flex;
     align-items: center;
-    gap: 6px;
-}
-
-#fp-header span {
-    display: flex;
-    align-items: center;
     gap: 8px;
-    color: #f3f3f3;
-}
-
-#fp-header span::before {
-    content: '';
-    display: block;
-    width: 8px;
-    height: 8px;
-    background: #00d26a;
-    border-radius: 50%;
-    box-shadow: 0 0 8px #00d26a;
-    animation: pulse-dot-pro 2s infinite;
-}
-
-@keyframes pulse-dot-pro {
-    0% {
-        box-shadow: 0 0 0 0 rgba(0, 210, 106, 0.7);
-    }
-
-    70% {
-        box-shadow: 0 0 0 6px rgba(0, 210, 106, 0);
-    }
-
-    100% {
-        box-shadow: 0 0 0 0 rgba(0, 210, 106, 0);
-    }
 }
 
 #fp-toggle,
 #fp-minimize {
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: #e0e0e0;
     border-radius: 6px;
     padding: 4px 10px;
     font-size: 11px;
@@ -114,27 +100,23 @@
     transition: all 0.2s ease;
 }
 
-#fp-toggle:hover,
-#fp-minimize:hover {
-    background: rgba(255, 255, 255, 0.2);
-    color: #fff;
-    transform: translateY(-1px);
-}
-
-#fp-toggle:active,
-#fp-minimize:active {
-    transform: translateY(0);
+#fp-toggle {
+    background: var(--fp-toggle-bg);
+    border: 1px solid var(--fp-toggle-border);
+    color: var(--fp-toggle-text);
 }
 
 #fp-minimize {
+    background: var(--fp-minimize-bg);
+    border: 1px solid var(--fp-minimize-border);
+    color: var(--fp-minimize-text);
     min-width: 28px;
     padding: 4px 8px;
 }
 
 #fp-content {
     flex: 1;
-    overflow-y: auto;
-    overflow-x: hidden;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
     align-items: stretch;
@@ -142,7 +124,45 @@
     gap: 10px;
     background: transparent;
     scrollbar-width: thin;
-    scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+    scrollbar-color: var(--fp-scrollbar) transparent;
+}
+
+#fp-resize {
+    width: 22px;
+    height: 22px;
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    cursor: nwse-resize;
+    opacity: 0.6;
+    transition: opacity 0.2s ease;
+}
+
+/* ── Descendants immédiats (0,1,0,1) ── */
+
+#fp-header span {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--fp-header-text);
+}
+
+#fp-content img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 6px;
+    box-shadow: var(--fp-img-shadow);
+    border: 1px solid var(--fp-img-border);
+    background: var(--fp-img-bg);
+    transform-origin: 0 0;
+}
+
+#fp-zoom-level {
+    font-size: 11px;
+    opacity: 0.7;
+    margin-left: 4px;
+    white-space: nowrap;
 }
 
 #fp-content::-webkit-scrollbar {
@@ -154,75 +174,134 @@
 }
 
 #fp-content::-webkit-scrollbar-thumb {
-    background-color: rgba(255, 255, 255, 0.2);
+    background-color: var(--fp-scrollbar);
     border-radius: 10px;
-}
-
-#fp-content img {
-    width: 100%;
-    height: auto;
-    display: block;
-    border-radius: 6px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    background: #000;
-    animation: fade-in-pro 0.3s ease-out;
-}
-
-#floating-preview-pro.fp-minimized #fp-content {
-    display: none;
-}
-
-#floating-preview-pro.fp-minimized {
-    min-height: 0;
-}
-
-@keyframes fade-in-pro {
-    from {
-        opacity: 0;
-        transform: scale(0.95);
-    }
-
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
-
-#fp-resize {
-    width: 14px;
-    height: 14px;
-    position: absolute;
-    bottom: 2px;
-    right: 2px;
-    cursor: nwse-resize;
-    opacity: 0.5;
-    transition: opacity 0.2s ease;
-}
-
-#fp-resize:hover {
-    opacity: 1;
 }
 
 #fp-resize::after,
 #fp-resize::before {
     content: '';
     position: absolute;
-    background: rgba(255, 255, 255, 0.7);
+    background: var(--fp-resize);
     border-radius: 1px;
     transform: rotate(-45deg);
 }
 
 #fp-resize::after {
-    width: 10px;
+    width: 14px;
     height: 2px;
-    bottom: 5px;
+    bottom: 7px;
     right: 1px;
 }
 
 #fp-resize::before {
-    width: 6px;
+    width: 8px;
     height: 2px;
     bottom: 1px;
-    right: 3px;
+    right: 5px;
+}
+
+/* ── Pseudo-éléments sur descendants (0,1,0,2) ── */
+
+#fp-header > span::before {
+    content: '';
+    display: block;
+    width: 8px;
+    height: 8px;
+    background: var(--fp-dot);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--fp-dot);
+    animation: pulse-dot-pro 2s infinite;
+}
+
+#floating-preview-pro.fp-disabled {
+    pointer-events: none;
+    background: var(--fp-bg-disabled);
+}
+
+#floating-preview-pro.fp-minimized {
+    min-height: 0;
+}
+
+#fp-toggle:hover,
+#fp-minimize:hover {
+    transform: translateY(-1px);
+}
+
+#fp-toggle:active,
+#fp-minimize:active {
+    transform: translateY(0);
+}
+
+#fp-toggle:hover {
+    background: var(--fp-toggle-hover-bg);
+    color: var(--fp-toggle-hover-text);
+}
+
+#fp-minimize:hover {
+    background: var(--fp-minimize-hover-bg);
+    color: var(--fp-minimize-hover-text);
+}
+
+#fp-resize:hover {
+    opacity: 1;
+}
+
+/* ── États composés : root + classe + descendant (0,2,1,0) ── */
+
+#floating-preview-pro.fp-disabled #fp-content,
+#floating-preview-pro.fp-disabled #fp-resize {
+    opacity: 0.04;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+#floating-preview-pro.fp-disabled #fp-toggle,
+#floating-preview-pro.fp-disabled #fp-minimize {
+    pointer-events: auto;
+}
+
+#floating-preview-pro.fp-disabled #fp-toggle {
+    background: var(--fp-toggle-off-bg);
+    border: 1px solid var(--fp-toggle-off-border);
+    color: var(--fp-toggle-off-text);
+}
+
+#floating-preview-pro.fp-disabled #fp-header {
+    background: var(--fp-header-bg-disabled);
+}
+
+#floating-preview-pro.fp-minimized #fp-content {
+    pointer-events: none;
+}
+
+/* ── États composés + pseudo-éléments (0,2,1,2) ── */
+
+#floating-preview-pro.fp-disabled #fp-header > span::before {
+    background: var(--fp-dot-off);
+    box-shadow: none;
+    animation: none;
+}
+
+/* ── États composés + pseudo-classe (0,2,2,0) ── */
+
+#floating-preview-pro.fp-disabled #fp-toggle:hover {
+    background: var(--fp-toggle-off-hover-bg);
+    color: var(--fp-toggle-off-hover-text);
+}
+
+/* ══════════════════════════════════════════════
+   KEYFRAMES (pas de spécificité)
+   ══════════════════════════════════════════════ */
+
+@keyframes pulse-dot-pro {
+    0% {
+        box-shadow: 0 0 0 0 rgba(0, 210, 106, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 6px rgba(0, 210, 106, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(0, 210, 106, 0);
+    }
 }
