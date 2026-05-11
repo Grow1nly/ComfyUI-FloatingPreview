@@ -51,6 +51,10 @@
     animation: none;
 }
 
+#floating-preview-pro.fp-disabled #fp-header {
+    background: rgba(30, 30, 35, 0.35);
+}
+
 #fp-header {
     background: rgba(30, 30, 35, 0.88);
     padding: 10px 14px;
