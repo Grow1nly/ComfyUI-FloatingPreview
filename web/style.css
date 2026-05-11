@@ -203,7 +203,7 @@
 
 /* ── Pseudo-éléments sur descendants (0,1,0,2) ── */
 
-#fp-header span::before {
+#fp-header > span::before {
     content: '';
     display: block;
     width: 8px;
