@@ -83,6 +83,7 @@ app.registerExtension({
             <div id="fp-header">
                 <span>Preview pro<span id="fp-zoom-level"></span></span>
                 <div id="fp-controls">
+                    <button id="fp-download" type="button" aria-label="Download image">💾</button>
                     <button id="fp-minimize" type="button" aria-label="Minimize"></button>
                     <button id="fp-toggle" type="button" aria-label="Disable preview"></button>
                 </div>
@@ -95,6 +96,7 @@ app.registerExtension({
         const content = container.querySelector("#fp-content");
         const toggleBtn = container.querySelector("#fp-toggle");
         const minimizeBtn = container.querySelector("#fp-minimize");
+        const downloadBtn = container.querySelector("#fp-download");
         const header = container.querySelector("#fp-header");
         const resize = container.querySelector("#fp-resize");
 
@@ -102,6 +104,8 @@ app.registerExtension({
         let minimized = Boolean(state.minimized);
         let currentNodeId = null;
         let lastBlobUrl = null;
+        let currentImageUrl = null;
+        let currentImageFilename = "preview.png";
         let isDragging = false;
         let isResizing = false;
         let dragOffsetX = 0;
@@ -281,7 +285,7 @@ app.registerExtension({
             applyZoomTransform();
         }
 
-        function addImage(url, isBlob) {
+        function addImage(url, isBlob, filename) {
             revokeLastBlobUrl();
             content.replaceChildren();
 
@@ -292,6 +296,9 @@ app.registerExtension({
             img.onload = () => { recalcHeightFromImage(); resetZoom(); };
             content.appendChild(img);
 
+            currentImageUrl = url;
+            currentImageFilename = filename || "preview.png";
+
             if (isBlob) {
                 lastBlobUrl = url;
             }
@@ -300,6 +307,19 @@ app.registerExtension({
         function clearFloatingPreview() {
             revokeLastBlobUrl();
             content.replaceChildren();
+            currentImageUrl = null;
+            currentImageFilename = "preview.png";
+        }
+
+        function downloadCurrentImage() {
+            if (!currentImageUrl) return;
+
+            const a = document.createElement("a");
+            a.href = currentImageUrl;
+            a.download = currentImageFilename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
         }
 
         function getBounds() {
@@ -387,6 +407,11 @@ app.registerExtension({
             setMinimized(!minimized);
         });
 
+        addManagedListener(downloadBtn, "click", (event) => {
+            event.stopPropagation();
+            downloadCurrentImage();
+        });
+
         addManagedListener(app.api, "execution_start", () => {
             currentNodeId = null;
             if (!enabled) {
@@ -415,7 +440,7 @@ app.registerExtension({
         addManagedListener(app.api, "b_preview", ({ detail }) => {
             if (!enabled || !(detail instanceof Blob)) return;
 
-            addImage(URL.createObjectURL(detail), true);
+            addImage(URL.createObjectURL(detail), true, "preview.png");
 
             clearNativePreview();
             clearAllSamplerPreviews();
@@ -434,11 +459,12 @@ app.registerExtension({
             }
 
             const image = detail.output.images[0];
+            const filename = image.filename || "preview.png";
             const url = app.api.apiURL(
-                `/view?filename=${encodeURIComponent(image.filename)}&type=${encodeURIComponent(image.type)}&subfolder=${encodeURIComponent(image.subfolder ?? "")}`
+                `/view?filename=${encodeURIComponent(filename)}&type=${encodeURIComponent(image.type)}&subfolder=${encodeURIComponent(image.subfolder ?? "")}`
             );
 
-            addImage(url, false);
+            addImage(url, false, filename);
             clearNativePreview();
             clearAllSamplerPreviews();
 
