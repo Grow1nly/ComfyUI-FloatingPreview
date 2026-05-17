@@ -19,32 +19,7 @@ A lightweight, zero‑dependency floating preview panel for ComfyUI. It displays
 
 ---
 
-## Panel overview
 
-```
-┌──────────────────────────────────────────┐
-│  ● Preview pro 150%          [–] [OFF]  │  ← header (drag handle + zoom level)
-│  ┌──────────────────────────────────────┐│
-│  │                                      ││
-│  │            GENERATED IMAGE           ││  ← zoomable, pannable
-│  │     (mouse wheel to zoom, drag       ││     content area
-│  │      to pan when zoomed in)          ││
-│  │                                      ││
-│  └──────────────────────────────────────┘│
-│                                         ╲ │  ← resize grip
-└──────────────────────────────────────────┘
-     ↑ glassmorphism: blur(12px), semi‑transparent, rounded 12px
-```
-
-The panel has **three visual states**:
-
-| State | Appearance |
-|-------|-----------|
-| **Normal** | Green pulsing dot ●, full glassmorphism, image visible, all interactions enabled |
-| **Minimized** | Collapsed to header height, only the header bar is visible |
-| **Disabled** | Faded (opacity 0.22), content hidden, pointer‑events disabled except header buttons. Toggle shows `[OFF]` in red, dot turns gray |
-
----
 
 ## Installation
 
