@@ -34,6 +34,12 @@
     --fp-minimize-hover-bg: rgba(255, 255, 255, 0.2);
     --fp-minimize-hover-text: #fff;
 
+    --fp-download-bg: rgba(100, 149, 237, 0.15);
+    --fp-download-border: rgba(100, 149, 237, 0.25);
+    --fp-download-text: #6495ed;
+    --fp-download-hover-bg: rgba(100, 149, 237, 0.25);
+    --fp-download-hover-text: #87ceeb;
+
     --fp-scrollbar: rgba(255, 255, 255, 0.2);
     --fp-img-border: rgba(255, 255, 255, 0.05);
     --fp-img-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
@@ -91,7 +97,8 @@
 }
 
 #fp-toggle,
-#fp-minimize {
+#fp-minimize,
+#fp-download {
     border-radius: 6px;
     padding: 4px 10px;
     font-size: 11px;
@@ -110,6 +117,14 @@
     background: var(--fp-minimize-bg);
     border: 1px solid var(--fp-minimize-border);
     color: var(--fp-minimize-text);
+    min-width: 28px;
+    padding: 4px 8px;
+}
+
+#fp-download {
+    background: var(--fp-download-bg);
+    border: 1px solid var(--fp-download-border);
+    color: var(--fp-download-text);
     min-width: 28px;
     padding: 4px 8px;
 }
@@ -224,12 +239,14 @@
 }
 
 #fp-toggle:hover,
-#fp-minimize:hover {
+#fp-minimize:hover,
+#fp-download:hover {
     transform: translateY(-1px);
 }
 
 #fp-toggle:active,
-#fp-minimize:active {
+#fp-minimize:active,
+#fp-download:active {
     transform: translateY(0);
 }
 
@@ -241,6 +258,11 @@
 #fp-minimize:hover {
     background: var(--fp-minimize-hover-bg);
     color: var(--fp-minimize-hover-text);
+}
+
+#fp-download:hover {
+    background: var(--fp-download-hover-bg);
+    color: var(--fp-download-hover-text);
 }
 
 #fp-resize:hover {
@@ -257,7 +279,8 @@
 }
 
 #floating-preview-pro.fp-disabled #fp-toggle,
-#floating-preview-pro.fp-disabled #fp-minimize {
+#floating-preview-pro.fp-disabled #fp-minimize,
+#floating-preview-pro.fp-disabled #fp-download {
     pointer-events: auto;
 }
 
