@@ -9,3 +9,4 @@ Thumbs.db
 node_modules/
 .claude/
 .sisyphus/
+AGENTS.md
