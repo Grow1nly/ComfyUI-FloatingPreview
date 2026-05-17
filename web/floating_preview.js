@@ -83,7 +83,7 @@ app.registerExtension({
             <div id="fp-header">
                 <span>Preview pro<span id="fp-zoom-level"></span></span>
                 <div id="fp-controls">
-                    <button id="fp-download" type="button" aria-label="Download image">⬇</button>
+                    <button id="fp-download" type="button" aria-label="Download image">💾</button>
                     <button id="fp-minimize" type="button" aria-label="Minimize"></button>
                     <button id="fp-toggle" type="button" aria-label="Disable preview"></button>
                 </div>
