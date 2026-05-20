@@ -198,11 +198,12 @@ app.registerExtension({
 
         function clearNodePreview(node) {
             if (!node) return false;
-            if (!node.imgs && !node.preview && node.imageIndex == null) return false;
+            if (!node.imgs && !node.preview && node.imageIndex == null && node.hideOutputImages) return false;
 
             node.imgs = null;
             node.preview = null;
             node.imageIndex = null;
+            node.hideOutputImages = true;
             return true;
         }
 
@@ -388,10 +389,16 @@ app.registerExtension({
                 if (!minimized) {
                     setMinimized(true);
                 }
+                for (const n of getGraphNodes()) {
+                    if (isSamplerNode(n)) {
+                        n.hideOutputImages = false;
+                    }
+                }
             } else {
                 if (minimized && !preDisabledMinimized) {
                     setMinimized(false);
                 }
+                clearAllSamplerPreviews();
             }
 
             saveState();
@@ -567,6 +574,7 @@ app.registerExtension({
         applyState();
         sanitizePosition();
         syncStateFromDom();
+        clearAllSamplerPreviews();
 
         window[GLOBAL_CLEANUP_KEY] = () => {
             clearFloatingPreview();
