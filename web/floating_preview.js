@@ -198,6 +198,17 @@ app.registerExtension({
 
         function clearNodePreview(node) {
             if (!node) return false;
+
+            const nodeId = String(node.id);
+
+            // Prevent Pinia store re-population (Vue frontend >= 1.41)
+            if (app.nodeOutputs && nodeId in app.nodeOutputs) {
+                delete app.nodeOutputs[nodeId];
+            }
+            if (app.nodePreviewImages && nodeId in app.nodePreviewImages) {
+                delete app.nodePreviewImages[nodeId];
+            }
+
             if (!node.imgs && !node.preview && node.imageIndex == null && node.hideOutputImages) return false;
 
             node.imgs = null;
@@ -451,10 +462,6 @@ app.registerExtension({
 
             clearNativePreview();
             clearAllSamplerPreviews();
-            requestAnimationFrame(() => {
-                clearNativePreview();
-                clearAllSamplerPreviews();
-            });
         });
 
         addManagedListener(app.api, "executed", ({ detail }) => {
@@ -474,11 +481,6 @@ app.registerExtension({
             addImage(url, false, filename);
             clearNativePreview();
             clearAllSamplerPreviews();
-
-            window.setTimeout(() => {
-                clearNativePreview();
-                clearAllSamplerPreviews();
-            }, 80);
         });
 
         const wheelHandler = (event) => {
